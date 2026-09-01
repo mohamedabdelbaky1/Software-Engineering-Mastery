@@ -723,15 +723,4 @@ Before moving to the next exercise, answer:
 
 ---
 
-This will be the first exercise file:
 
-```text
-02-Exercises/
-└── Exercise-01-Class-and-Object-Basics.md
-```
-
-Next will be:
-
-`Exercise-02-State-Behavior-and-Identity.md`
-
-where the focus shifts from **creating objects** → **understanding how objects behave and own their state**.
