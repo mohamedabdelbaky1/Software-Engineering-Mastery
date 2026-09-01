@@ -1,12 +1,4 @@
-I will continue with the same FAANG-style documentation approach.
 
-```
-
-This exercise will move from **"How to create objects"** to the core OOP thinking:
-
-> Every object has **State + Behavior + Identity**.
-
----
 
 # 🧩 Exercise 02 — State, Behavior, and Identity
 
