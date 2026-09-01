@@ -1,10 +1,10 @@
 
 
-# 🧩 Exercise 12 — Refactoring Public State
+# 🧩 Exercise 13 — Building a Bank Account Domain
 
 > **Course:** Object-Oriented Programming (OOP)
 > **Module:** 01 — OOP Basics & Encapsulation
-> **Exercise Level:** 🟠 Professional OOP Thinking
+> **Exercise Level:** 🟠 Real-World Domain Design
 > **Language:** C#
 
 ---
@@ -15,284 +15,338 @@
 
 This exercise focuses on:
 
-* Identifying poor encapsulation
-* Refactoring public fields
-* Moving behavior into objects
-* Protecting object state
-* Improving maintainability
-* Applying OOP principles to existing code
+* Complete object modeling
+* Domain entities
+* Encapsulation
+* Constructor design
+* Access modifiers
+* Invariants
+* Controlled behavior
+* State transitions
+* Object responsibility
 
 ---
 
-## Why This Matters
+# Why This Matters
 
-In real companies, you rarely start with a perfect codebase.
-
-You usually inherit code like:
+A professional developer does not design classes as:
 
 ```text
-Old system
-    ↓
-Many public fields
-    ↓
-Business logic everywhere
-    ↓
-Hard to change
+Class = Data Holder
 ```
 
-A senior engineer must be able to:
+Instead:
 
-1. Understand existing code.
-2. Identify design problems.
-3. Refactor safely.
-4. Preserve behavior.
+```text
+Class = Real-world responsibility
+```
+
+A bank account is not just:
+
+```text
+Account Number
+Balance
+Owner
+```
+
+It also contains rules:
+
+```text
+Can money be withdrawn?
+
+Can the account be closed?
+
+Can balance become negative?
+
+Can inactive accounts receive transactions?
+```
+
+The object must protect these rules.
 
 ---
 
 # 🏢 Real-World Scenario
 
-# Employee Payroll System
+## Banking Application
 
-You joined a company and found this existing employee system.
+You are building the account module of a banking system.
 
-The current implementation works, but developers are facing problems:
+A bank account has:
 
-* Anyone can change salary.
-* Employee status can become invalid.
-* Payroll logic is duplicated.
-* Different parts of the application modify employee data directly.
+* Identity
+* Owner information
+* Balance
+* Status
+* Transaction history
 
-Your task:
+---
 
-Refactor the design using OOP principles.
+The account lifecycle:
+
+```text
+Active
+
+   |
+   |
+   ▼
+
+Suspended
+
+   |
+   |
+   ▼
+
+Closed
+```
 
 ---
 
 # 📌 Requirements
 
-The employee system should support:
+Create a `BankAccount` class.
 
 ---
 
-## Employee Information
+# Account State
 
-The employee has:
+The account should contain:
 
 ```text
-Employee Id
+Account Number
 
-Name
+Owner Name
 
-Salary
+Balance
 
 Status
+
+Transactions
 ```
 
 ---
 
-## Employee Operations
+# Account Rules
 
-The employee should support:
-
-```csharp
-IncreaseSalary()
-
-Deactivate()
-
-CalculateAnnualSalary()
-```
-
----
-
-## Business Rules
-
-The system must guarantee:
+The object must guarantee:
 
 ```text
-Salary cannot be negative.
+Account number cannot change.
 
-Inactive employees cannot receive salary increases.
+Balance cannot be modified directly.
 
-Employee status changes must be controlled.
+Balance cannot become negative.
 
-External code cannot directly modify employee state.
+Closed accounts cannot perform transactions.
+
+Transaction history cannot be modified externally.
+```
+
+---
+
+# Account Behaviors
+
+---
+
+## Deposit
+
+```csharp
+Deposit(decimal amount)
+```
+
+Rules:
+
+* Amount must be positive.
+* Account cannot be closed.
+
+---
+
+## Withdraw
+
+```csharp
+Withdraw(decimal amount)
+```
+
+Rules:
+
+* Amount must be positive.
+* Balance must be sufficient.
+* Account cannot be closed.
+
+---
+
+## Suspend Account
+
+```csharp
+Suspend()
+```
+
+Rules:
+
+Allowed:
+
+```text
+Active → Suspended
+```
+
+---
+
+## Close Account
+
+```csharp
+Close()
+```
+
+Rules:
+
+Allowed:
+
+```text
+Active → Closed
+
+Suspended → Closed
 ```
 
 ---
 
 # 🧠 Engineering Focus
 
-Think like a code reviewer.
+## Question 1
 
----
+### Who owns balance rules?
 
-# Question 1
+Bad:
 
-## What Is Wrong With Public State?
-
-Example:
-
-```csharp
-employee.Salary = -5000;
+```text
+BankService
+Controller
+UI
 ```
 
-The object cannot protect itself.
+Better:
+
+```text
+BankAccount
+```
+
+Because:
+
+```text
+BankAccount owns Balance.
+```
 
 ---
 
 # Question 2
 
-## Who Owns Salary Rules?
+## Should Balance Be Public?
 
 Bad:
 
-```text
-PayrollService
-
-SalaryValidator
-
-EmployeeController
+```csharp
+account.Balance = 1000000;
 ```
 
-Everyone knows employee rules.
+Problems:
+
+* No validation.
+* No transaction record.
+* No business meaning.
 
 ---
 
 Better:
 
-```text
-Employee
-```
-
-because:
-
-```text
-Employee owns employee data.
+```csharp
+account.Deposit(1000000);
 ```
 
 ---
 
 # Question 3
 
-## Is Data Enough?
+## Should Transactions Be Public?
 
 Bad:
 
 ```csharp
-Employee
-{
-    Salary
-    Status
-}
+account.Transactions.Clear();
 ```
 
-A professional object also has:
+This destroys history.
 
-```text
-State
-
-+
-
-Behavior
-```
+The account should own transaction management.
 
 ---
 
-# ❌ Original Bad Design
+# ❌ Bad Design Example
 
 ```csharp
-public class Employee
+public class BankAccount
 {
-    public int Id;
+    public string AccountNumber;
 
-    public string Name;
+    public string OwnerName;
 
-    public decimal Salary;
+    public decimal Balance;
 
     public string Status;
+
+    public List<string> Transactions;
 }
 ```
 
 Usage:
 
 ```csharp
-Employee employee = new Employee();
+account.Balance = -500;
 
-employee.Id = 1;
+account.Status = "Closed";
 
-employee.Name = "Ahmed";
-
-employee.Salary = 5000;
-
-employee.Status = "Active";
-
-
-// Somewhere else:
-
-employee.Salary += 1000;
-
-employee.Status = "Inactive";
+account.Transactions.Clear();
 ```
 
 ---
 
 # Why This Is Poor Design
 
----
+## 1. No Encapsulation
 
-## 1. No Protection
-
-Anyone can do:
-
-```csharp
-employee.Salary = -10000;
-```
+Everything is exposed.
 
 ---
 
-## 2. Business Logic Is Scattered
-
-Example:
-
-```csharp
-if(employee.Status == "Active")
-{
-    employee.Salary += amount;
-}
-```
-
-This may appear in:
-
-* Payroll system
-* HR system
-* Reports
-
----
-
-## 3. Invalid States Exist
+## 2. Invalid States Exist
 
 Example:
 
 ```text
-Status = Inactive
+Closed account
 
-Salary increased
++
+Successful withdrawal
 ```
+
+---
+
+## 3. No Audit Trail
+
+Balance changes happen without records.
 
 ---
 
 # ✅ Expected Design Direction
 
-Refactor toward:
+The class should become:
 
 ```text
-Employee
+BankAccount
 
-Private State
+Owns:
 
-+
-
-Controlled Behavior
+Identity
+State
+Rules
+Behavior
 ```
 
 ---
@@ -300,79 +354,128 @@ Controlled Behavior
 # Design
 
 ```text
-Employee
+BankAccount
 
 Public:
-    Id
-    Name
-    Salary
-    Status
 
-Methods:
-    IncreaseSalary()
-    Deactivate()
-    CalculateAnnualSalary()
+AccountNumber
+OwnerName
+Balance
+Status
+
+Deposit()
+Withdraw()
+Suspend()
+Close()
 
 
 Private:
-    Validation Rules
+
+Transactions
+Validation Rules
 ```
 
 ---
 
 # 💻 Solution
 
+## Account Status
+
 ```csharp
-using System;
-
-
-public enum EmployeeStatus
+public enum AccountStatus
 {
     Active,
-    Inactive
+    Suspended,
+    Closed
 }
+```
 
+---
 
-public class Employee
+## Transaction
+
+```csharp
+public class Transaction
 {
-    public int Id { get; }
+    public string Type { get; }
 
-    public string Name { get; }
+    public decimal Amount { get; }
 
-    public decimal Salary { get; private set; }
-
-    public EmployeeStatus Status { get; private set; }
+    public DateTime Date { get; }
 
 
-    public Employee(
-        int id,
-        string name,
-        decimal salary)
+    public Transaction(
+        string type,
+        decimal amount)
     {
-        if (salary < 0)
+        Type = type;
+        Amount = amount;
+        Date = DateTime.Now;
+    }
+}
+```
+
+---
+
+## BankAccount
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+
+public class BankAccount
+{
+    private readonly List<Transaction> transactions = new();
+
+
+    public string AccountNumber { get; }
+
+    public string OwnerName { get; }
+
+    public decimal Balance { get; private set; }
+
+    public AccountStatus Status { get; private set; }
+
+
+    public IReadOnlyList<Transaction> Transactions 
+        => transactions;
+
+
+
+    public BankAccount(
+        string accountNumber,
+        string ownerName,
+        decimal initialBalance)
+    {
+        if (string.IsNullOrWhiteSpace(accountNumber))
         {
             throw new ArgumentException(
-                "Salary cannot be negative.");
+                "Account number required.");
         }
 
 
-        Id = id;
+        if (initialBalance < 0)
+        {
+            throw new ArgumentException(
+                "Invalid balance.");
+        }
 
-        Name = name;
 
-        Salary = salary;
+        AccountNumber = accountNumber;
 
-        Status = EmployeeStatus.Active;
+        OwnerName = ownerName;
+
+        Balance = initialBalance;
+
+        Status = AccountStatus.Active;
     }
 
 
-    public void IncreaseSalary(decimal amount)
+
+    public void Deposit(decimal amount)
     {
-        if (Status == EmployeeStatus.Inactive)
-        {
-            throw new InvalidOperationException(
-                "Inactive employees cannot receive raises.");
-        }
+        EnsureAccountIsActive();
 
 
         if (amount <= 0)
@@ -382,19 +485,82 @@ public class Employee
         }
 
 
-        Salary += amount;
+        Balance += amount;
+
+
+        transactions.Add(
+            new Transaction(
+                "Deposit",
+                amount));
     }
 
 
-    public void Deactivate()
+
+    public void Withdraw(decimal amount)
     {
-        Status = EmployeeStatus.Inactive;
+        EnsureAccountIsActive();
+
+
+        if (amount <= 0)
+        {
+            throw new ArgumentException(
+                "Amount must be positive.");
+        }
+
+
+        if (amount > Balance)
+        {
+            throw new InvalidOperationException(
+                "Insufficient balance.");
+        }
+
+
+        Balance -= amount;
+
+
+        transactions.Add(
+            new Transaction(
+                "Withdrawal",
+                amount));
     }
 
 
-    public decimal CalculateAnnualSalary()
+
+    public void Suspend()
     {
-        return Salary * 12;
+        if (Status != AccountStatus.Active)
+        {
+            throw new InvalidOperationException(
+                "Only active accounts can be suspended.");
+        }
+
+
+        Status = AccountStatus.Suspended;
+    }
+
+
+
+    public void Close()
+    {
+        if (Status == AccountStatus.Closed)
+        {
+            throw new InvalidOperationException(
+                "Account already closed.");
+        }
+
+
+        Status = AccountStatus.Closed;
+    }
+
+
+
+    private void EnsureAccountIsActive()
+    {
+        if (Status == AccountStatus.Closed)
+        {
+            throw new InvalidOperationException(
+                "Closed account cannot perform operations.");
+        }
     }
 }
 ```
@@ -408,25 +574,25 @@ public class Program
 {
     public static void Main()
     {
-        Employee employee =
-            new Employee(
-                1,
-                "Ahmed",
+        BankAccount account =
+            new BankAccount(
+                "ACC-001",
+                "Mohamed",
                 5000);
 
 
-        employee.IncreaseSalary(1000);
+        account.Deposit(1000);
+
+
+        account.Withdraw(2000);
 
 
         Console.WriteLine(
-            employee.Salary);
+            account.Balance);
 
 
         Console.WriteLine(
-            employee.CalculateAnnualSalary());
-
-
-        employee.Deactivate();
+            account.Transactions.Count);
     }
 }
 ```
@@ -436,9 +602,9 @@ public class Program
 # Expected Output
 
 ```text
-6000
+4000
 
-72000
+2
 ```
 
 ---
@@ -446,9 +612,9 @@ public class Program
 # Invalid Operation Test
 
 ```csharp
-employee.Deactivate();
+account.Close();
 
-employee.IncreaseSalary(500);
+account.Deposit(500);
 ```
 
 Expected:
@@ -456,167 +622,114 @@ Expected:
 ```text
 Exception
 
-Inactive employees cannot receive raises.
+Closed account cannot perform operations.
 ```
 
 ---
 
 # 🔍 Solution Explanation
 
-## Before Refactoring
+## Why Is Balance Private Set?
 
-The employee was:
+Because balance changes are business actions:
 
 ```text
-Data Container
+Deposit
+Withdraw
 ```
+
+not simple assignments.
 
 ---
 
-## After Refactoring
+## Why Are Transactions Private?
 
-The employee became:
+Because history is owned by the account.
+
+External code should view it:
+
+```csharp
+account.Transactions
+```
+
+but not modify it.
+
+---
+
+## Why Does Account Validate Operations?
+
+Because it owns:
 
 ```text
-Business Object
+Balance
+Status
+Transactions
+```
+
+Therefore it owns their rules.
+
+---
+
+## Why Use Methods Instead of Setters?
+
+Compare:
+
+```csharp
+account.Status = Closed;
 ```
 
 with:
 
-```text
-State
-
-+
-
-Rules
-
-+
-
-Behavior
-```
-
----
-
-# Why Is Salary Private Set?
-
 ```csharp
-public decimal Salary { get; private set; }
+account.Close();
 ```
 
-Because salary changes must happen through:
+The second expresses:
 
-```csharp
-IncreaseSalary()
-```
-
-not:
-
-```csharp
-Salary = value;
-```
-
----
-
-# Why Is Status An Enum?
-
-Before:
-
-```csharp
-"Active"
-"Inactive"
-```
-
-Problems:
-
-```text
-"active"
-
-"ACTIVE"
-
-"Actve"
-```
-
-Enum gives:
-
-* Type safety.
-* Clear possible values.
-* Better refactoring.
-
----
-
-# Why Move Logic Inside Employee?
-
-Before:
-
-```csharp
-PayrollService
-{
-    Check employee status
-    Change salary
-}
-```
-
-After:
-
-```csharp
-employee.IncreaseSalary();
-```
-
-The employee protects its own rules.
+* Intent.
+* Business meaning.
+* Validation.
 
 ---
 
 # 💡 Senior Engineer Notes
 
-## Refactoring Mindset
+## Entity Thinking
 
-When reviewing code, ask:
+A bank account is an entity because it has:
 
-### 1. Can this object become invalid?
-
-If yes:
-
-Add protection.
-
----
-
-### 2. Can external code modify important state?
-
-If yes:
-
-Reduce access.
-
----
-
-### 3. Does behavior belong somewhere else?
-
-Move it closer to the data it affects.
-
----
-
-# Common Refactoring Steps
-
-A practical approach:
+### Identity
 
 ```text
-1. Find public mutable fields
-
-        ↓
-
-2. Make state private
-
-        ↓
-
-3. Add controlled methods
-
-        ↓
-
-4. Move business rules inside object
-
-        ↓
-
-5. Add validation
+Account Number
 ```
+
+### State
+
+```text
+Balance
+Status
+```
+
+### Behavior
+
+```text
+Deposit
+Withdraw
+Close
+```
+
+---
+
+## Encapsulation Goal
+
+Encapsulation is not:
+
+> "Make fields private."
+
+The real goal:
+
+> "Prevent invalid behavior and protect business rules."
 
 ---
 
@@ -624,86 +737,84 @@ A practical approach:
 
 ## Question 1
 
-### What is the problem with anemic domain models?
+### What makes a class a good domain object?
 
 Answer:
 
-An anemic model contains mostly data with little or no behavior, causing business logic to spread across services.
+A good domain object:
+
+* Has clear identity.
+* Owns related state.
+* Contains relevant behavior.
+* Protects business rules.
 
 ---
 
 ## Question 2
 
-### Why is encapsulation useful during refactoring?
+### Why should balance changes not happen through setters?
 
 Answer:
 
-Because it creates boundaries that allow internal implementation changes without affecting external code.
+Because balance changes require validation and represent business operations.
 
 ---
 
 ## Question 3
 
-### How do you improve a class with many public fields?
+### What is the benefit of keeping invariants inside the entity?
 
 Answer:
 
-* Hide internal state.
-* Add meaningful behaviors.
-* Validate changes.
-* Control mutations.
+The entity guarantees correctness regardless of where it is used.
 
 ---
 
 ## Question 4
 
-### What is the goal of refactoring?
+### What is the difference between an entity and a data object?
 
 Answer:
 
-Improve design quality without changing the external behavior of the system.
+An entity has identity and behavior.
+
+A data object mainly carries information.
 
 ---
 
 # 🧠 Engineering Reflection
 
-Answer:
-
 ```text
-1. What problems existed in the original Employee class?
+1. Why does BankAccount own Deposit()?
 
-2. Why should Salary changes happen through methods?
+2. Why is Balance not directly writable?
 
-3. What invalid states did refactoring prevent?
+3. Which invariants does this class protect?
 
-4. Why is behavior important in OOP?
+4. Why is Transaction history encapsulated?
 
-5. How does encapsulation make future changes safer?
+5. How would this design scale in a banking application?
 ```
 
 ---
 
 # 🏁 Key Takeaways
 
-1. Existing code can always be improved.
-2. Public mutable state creates fragile systems.
-3. Objects should protect important rules.
-4. Refactoring is about improving design without changing behavior.
-5. Good objects combine:
-
-   * State
-   * Behavior
-   * Rules
-6. Encapsulation reduces coupling and improves maintainability.
-7. Senior engineers spend significant time improving existing designs.
+1. Real objects contain both data and behavior.
+2. Entities protect their own rules.
+3. Constructors establish valid initial state.
+4. Methods represent meaningful business actions.
+5. Collections should be protected.
+6. State transitions should be controlled.
+7. Encapsulation creates reliable software objects.
 
 ---
 
 <p align="center">
   <strong>Module 01 — OOP Basics & Encapsulation</strong><br>
-  Exercise 12 of 19 ✅
+  Exercise 13 of 19 ✅
 </p>
 ```
 
 
-* Applying encapsulation, invariants, constructors, methods, and state transitions together.
+* Immutable design patterns in C#.
