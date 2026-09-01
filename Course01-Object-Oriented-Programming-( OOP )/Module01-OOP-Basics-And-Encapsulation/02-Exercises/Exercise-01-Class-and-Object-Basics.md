@@ -1,13 +1,4 @@
-I will create it in the same **GitHub README-style format** as the Lessons, but adapted for exercises.
 
-File:
-
-```text
-02-Exercises/
-└── Exercise-01-Class-and-Object-Basics.md
-```
-
----
 
 # 🧩 Exercise 01 — Class and Object Basics
 
