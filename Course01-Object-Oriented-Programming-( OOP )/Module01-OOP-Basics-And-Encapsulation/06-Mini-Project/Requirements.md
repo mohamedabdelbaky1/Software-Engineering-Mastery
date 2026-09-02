@@ -1,6 +1,5 @@
 
 
-````markdown
 # 🏦 Secure Banking System
 
 # Software Requirements Document (SRD)
