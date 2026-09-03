@@ -127,5 +127,4 @@ A good reviewer asks:
 
 > "Is this code safe, maintainable, and easy to evolve?"
 
-```
 
