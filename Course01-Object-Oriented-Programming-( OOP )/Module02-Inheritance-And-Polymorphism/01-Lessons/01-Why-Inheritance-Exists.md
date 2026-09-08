@@ -1080,6 +1080,5 @@ Always think about:
 - Relationship
 - Responsibility
 - Maintainability
-```
 
 
