@@ -5,7 +5,7 @@
 > **Module:** Inheritance and Polymorphism\
 > **Topic:** Runtime Polymorphism and Dynamic Behavior\
 > **Language:** C#\
-> **Focus:** Understanding How C# Chooses Methods at Runtime\
+> **Focus:** Understanding How C# Chooses Methods at Runtime
 
 ---
 
