@@ -1,5 +1,4 @@
 
-
 # Lesson 08 — Compile-Time Polymorphism in C#
 
 > **Module:** Inheritance and Polymorphism
