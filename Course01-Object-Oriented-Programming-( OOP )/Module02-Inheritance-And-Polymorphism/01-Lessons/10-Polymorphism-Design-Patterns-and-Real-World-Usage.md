@@ -2,9 +2,9 @@
 
 # Lesson 10 — Polymorphism Design Patterns and Real-World Usage
 
-> **Module:** Inheritance and Polymorphism
-> **Topic:** Applying Polymorphism in Real Software Design
-> **Language:** C#
+> **Module:** Inheritance and Polymorphism\
+> **Topic:** Applying Polymorphism in Real Software Design\
+> **Language:** C#\
 > **Focus:** Using Polymorphism to Build Flexible and Extensible Systems
 
 ---
