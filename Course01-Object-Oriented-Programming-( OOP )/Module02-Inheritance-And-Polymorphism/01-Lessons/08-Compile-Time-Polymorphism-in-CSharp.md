@@ -3,7 +3,6 @@
 > **Module:** Inheritance and Polymorphism\
 > **Topic:** Compile-Time Polymorphism\
 > **Language:** C#\
-> **Level:** Intermediate\
 > **Focus:** Understanding Method Resolution Before Runtime
 
 ------------------------------------------------------------------------
