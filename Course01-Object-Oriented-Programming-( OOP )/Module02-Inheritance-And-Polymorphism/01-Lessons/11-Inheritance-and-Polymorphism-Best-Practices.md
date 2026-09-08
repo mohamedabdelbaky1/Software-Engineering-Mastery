@@ -1,9 +1,9 @@
 
 # Lesson 11 — Inheritance and Polymorphism Best Practices
 
-> **Module:** Inheritance and Polymorphism
-> **Topic:** Professional Design Guidelines
-> **Language:** C#
+> **Module:** Inheritance and Polymorphism\
+> **Topic:** Professional Design Guidelines\
+> **Language:** C#\
 > **Focus:** Designing Maintainable Inheritance Hierarchies
 
 ---
