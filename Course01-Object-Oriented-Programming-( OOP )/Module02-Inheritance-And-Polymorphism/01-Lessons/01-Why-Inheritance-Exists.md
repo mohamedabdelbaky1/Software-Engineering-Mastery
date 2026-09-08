@@ -1051,7 +1051,6 @@ Changes in the parent may affect multiple children.
 
 # ✅ Key Takeaways
 
-```
 Inheritance is a design tool.
 
 It represents relationships between objects.
@@ -1080,5 +1079,4 @@ Always think about:
 - Relationship
 - Responsibility
 - Maintainability
-
 
