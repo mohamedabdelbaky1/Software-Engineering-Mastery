@@ -825,33 +825,5 @@ Overriding:
 7. Explain operator overloading.
 8. Compare compile-time and runtime polymorphism.
 
----
 
-# ✅ Key Takeaways
-
-```text
-Compile-Time Polymorphism:
-
-The compiler decides behavior.
-
-
-Main examples:
-
-1. Method Overloading
-
-2. Constructor Overloading
-
-3. Operator Overloading
-
-
-Overloading requires:
-
-Same name
-
-+
-Different parameters
-
-
-Return type alone is not enough.
-```
 
