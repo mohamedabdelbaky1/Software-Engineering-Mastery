@@ -851,5 +851,3 @@ Different parameters
 
 
 Return type alone is not enough.
-```
-
