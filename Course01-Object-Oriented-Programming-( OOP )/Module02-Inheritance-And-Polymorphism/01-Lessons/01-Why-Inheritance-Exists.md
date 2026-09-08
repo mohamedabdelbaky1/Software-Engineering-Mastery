@@ -375,39 +375,240 @@ Car IS-A Vehicle
 A car is a type of vehicle.
 
 ---
-
 # 7. Bad Inheritance Examples
 
-Consider:
+A common mistake is using inheritance because two classes share some data or behavior.
+
+Inheritance should represent a real:
 
 ```
-Database IS-A File
+
+IS-A relationship
+
 ```
 
-A developer might think:
+Not just:
+
+```
+
+Has similar code
+
+````
+
+---
+
+# Example 1 — Database Inherits From File ❌
+
+A beginner might think:
 
 "Both store information, so Database can inherit from File."
 
-Technically possible:
+```csharp
+public class File
+{
+    public string Name { get; set; }
+
+
+    public void Open()
+    {
+        Console.WriteLine("Opening file");
+    }
+}
+
+
+public class Database : File
+{
+
+}
+````
+
+## Why Is This Bad?
+
+A database is not a type of file.
+
+Although both may:
+
+* Store data.
+* Have a name.
+* Be accessed.
+
+They represent different concepts.
+
+The relationship is wrong:
+
+```
+Database IS-A File ❌
+```
+
+---
+
+# Example 2 — Square Inherits From Rectangle ❌
+
+This is a famous design problem.
 
 ```csharp
-public class Database : File
+public class Rectangle
+{
+    public int Width { get; set; }
+
+    public int Height { get; set; }
+
+
+    public int Area()
+    {
+        return Width * Height;
+    }
+}
+
+
+public class Square : Rectangle
 {
 
 }
 ```
 
-But the relationship is wrong.
+## Why Is This Problematic?
 
-Why?
+A square technically is a rectangle mathematically.
 
-Because:
+But in software design, their behaviors are different.
 
-A database is not a type of file.
+Rectangle:
 
-They may have similar operations, but they represent different concepts.
+```text
+Width can change independently.
+
+Height can change independently.
+```
+
+Square:
+
+```text
+Width and Height must always be equal.
+```
+
+The child cannot always respect the parent's behavior.
 
 ---
+
+# Example 3 — Bird Inherits From FlyingBird ❌
+
+```csharp
+public class FlyingBird
+{
+    public void Fly()
+    {
+        Console.WriteLine("Flying");
+    }
+}
+
+
+public class Penguin : FlyingBird
+{
+
+}
+```
+
+## Problem
+
+A penguin is a bird, but it cannot fly.
+
+The parent class provides behavior that does not apply to all children.
+
+The hierarchy is wrong.
+
+```
+Penguin IS-A FlyingBird ❌
+```
+
+---
+
+
+# Example 4 — Car Inherits From Engine ❌
+
+```csharp
+public class Engine
+{
+    public void Start()
+    {
+
+    }
+}
+
+
+public class Car : Engine
+{
+
+}
+```
+
+## Why Is This Wrong?
+
+A car is not an engine.
+
+The correct relationship is:
+
+```
+Car HAS-A Engine
+```
+
+Not:
+
+```
+Car IS-A Engine
+```
+
+This should be composition:
+
+```csharp
+public class Car
+{
+    private Engine engine;
+}
+```
+
+---
+
+
+# Senior Engineer Rule
+
+Before creating inheritance, ask:
+
+## Question 1
+
+Can I complete this sentence?
+
+```
+Child IS-A Parent
+```
+
+Example:
+
+```
+Developer IS-A Employee ✅
+```
+
+```
+Car IS-A Engine ❌
+```
+
+---
+
+## Question 2
+
+Does the child need all parent behavior?
+
+If the child inherits unnecessary behavior, the hierarchy is probably wrong.
+
+---
+
+## Question 3
+
+Am I using inheritance because of a real relationship or only because of shared code?
+
+Shared code alone is not enough reason.
+
+
 
 # 8. Code Reuse vs Relationship Modeling
 
