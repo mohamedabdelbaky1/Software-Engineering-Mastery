@@ -2,10 +2,10 @@
 
 # Lesson 09 — Runtime Polymorphism Deep Dive in C#
 
-> **Module:** Inheritance and Polymorphism
-> **Topic:** Runtime Polymorphism and Dynamic Behavior
-> **Language:** C#
-> **Focus:** Understanding How C# Chooses Methods at Runtime
+> **Module:** Inheritance and Polymorphism/
+> **Topic:** Runtime Polymorphism and Dynamic Behavior/
+> **Language:** C#/
+> **Focus:** Understanding How C# Chooses Methods at Runtime/
 
 ---
 
