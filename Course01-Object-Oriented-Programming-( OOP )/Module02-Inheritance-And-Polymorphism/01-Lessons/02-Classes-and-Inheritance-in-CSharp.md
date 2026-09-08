@@ -869,7 +869,7 @@ Because the base part of the object must be initialized before the derived part.
 
 # ✅ Key Takeaways
 
-```
+
 Inheritance creates a relationship between classes.
 
 Base Class:
