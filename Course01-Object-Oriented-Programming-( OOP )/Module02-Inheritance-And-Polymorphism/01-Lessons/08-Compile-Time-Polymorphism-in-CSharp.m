@@ -1,9 +1,11 @@
 
+
 # Lesson 08 — Compile-Time Polymorphism in C#
 
 > **Module:** Inheritance and Polymorphism
 > **Topic:** Compile-Time Polymorphism
 > **Language:** C#
+> **Level:** Intermediate
 > **Focus:** Understanding Method Resolution Before Runtime
 
 ---
@@ -851,3 +853,5 @@ Different parameters
 
 
 Return type alone is not enough.
+```
+
